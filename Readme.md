@@ -75,28 +75,6 @@ By 2030, we aim to be the global standard for pharmaceutical supply chain verifi
 contract ID:ST31R6FCV4VD4MBYE7JC71XB2GB66WQZ7PKRM8496.PharmaSupplyTrackerContract
 ![alt text](image.png)
 
-### Testnet Deployment:
-- **Network**: Stacks Testnet
-- **Contract Address**: [To be added after deployment]
-- **Deployer Address**: [To be added after deployment]
-- **Deployment Transaction**: [To be added after deployment]
-- **Deployment Block Height**: [To be added after deployment]
-
-### Mainnet Deployment:
-- **Network**: Stacks Mainnet  
-- **Contract Address**: [To be added after deployment]
-- **Deployer Address**: [To be added after deployment]
-- **Deployment Transaction**: [To be added after deployment]
-- **Deployment Block Height**: [To be added after deployment]
-- **Contract Verification**: [Link to be added after verification]
-
-### Contract Interaction:
-- **Stacks Explorer**: [Link to be added after deployment]
-- **Contract Source Code**: [GitHub repository link]
-- **API Endpoints**: [Documentation links to be added]
-- **SDK Integration**: [Developer resources to be added]
-
----
 
 ### Getting Started
 
