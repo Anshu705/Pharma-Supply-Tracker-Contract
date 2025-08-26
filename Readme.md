@@ -78,17 +78,7 @@ contract ID:ST31R6FCV4VD4MBYE7JC71XB2GB66WQZ7PKRM8496.PharmaSupplyTrackerContrac
 
 ### Getting Started
 
-#### Prerequisites:
-- Stacks CLI installed
-- Clarinet development environment
-- Node.js and npm for frontend integration
 
-#### Deployment Instructions:
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Test locally: `clarinet test`
-4. Deploy to testnet: `clarinet deploy --testnet`
-5. Verify deployment on Stacks Explorer
 
 #### Contributing:
 We welcome contributions from the community. Please read our contributing guidelines and submit pull requests for any enhancements.
