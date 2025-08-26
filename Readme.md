@@ -84,7 +84,7 @@ contract ID:ST31R6FCV4VD4MBYE7JC71XB2GB66WQZ7PKRM8496.PharmaSupplyTrackerContrac
 We welcome contributions from the community. Please read our contributing guidelines and submit pull requests for any enhancements.
 
 #### License:
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - .
 
 #### Support:
 For technical support or partnership inquiries, please contact our development team at 
