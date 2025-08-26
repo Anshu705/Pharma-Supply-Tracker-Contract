@@ -87,6 +87,6 @@ We welcome contributions from the community. Please read our contributing guidel
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 #### Support:
-For technical support or partnership inquiries, please contact our development team at [contact information to be added].
+For technical support or partnership inquiries, please contact our development team at 
 
 ---
