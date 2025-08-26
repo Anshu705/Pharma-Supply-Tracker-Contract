@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharma Supply Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: rgba(255,255,255,0.95);
+            --bg-card: linear-gradient(135deg, #ffffff, #f8f9fa);
+            --text-primary: #2c3e50;
+            --text-secondary: #34495e;
+            --text-light: #ffffff;
+            --border-color: #e1e8ed;
+            --shadow-light: rgba(0,0,0,0.08);
+            --shadow-medium: rgba(0,0,0,0.15);
+            --accent-color: #667eea;
+            --accent-hover: #5a67d8;
+            --success-bg: #d4edda;
+            --success-text: #155724;
+            --error-bg: #f8d7da;
+            --error-text: #721c24;
+            --warning-bg: #fff3cd;
+            --warning-text: #856404;
+            --input-bg: #ffffff;
+            --card-border: rgba(255,255,255,0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            --bg-secondary: rgba(22, 27, 34, 0.95);
+            --bg-card: linear-gradient(135deg, #161b22, #21262d);
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-light: #f0f6fc;
+            --border-color: #30363d;
+            --shadow-light: rgba(0,0,0,0.4);
+            --shadow-medium: rgba(0,0,0,0.6);
+            --accent-color: #58a6ff;
+            --accent-hover: #4493f7;
+            --success-bg: #238636;
+            --success-text: #aff5b4;
+            --error-bg: #da3633;
+            --error-text: #ffdcd7;
+            --warning-bg: #9e6a03;
+            --warning-text: #f2cc60;
+            --input-bg: #0d1117;
+            --card-border: rgba(240, 246, 252, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            padding: 12px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px var(--shadow-medium);
+            background: var(--accent-color);
+            color: var(--text-light);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .wallet-section {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        .wallet-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .connect-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76,175,80,0.3);
+        }
+
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76,175,80,0.4);
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+        }
+
+        [data-theme="dark"] .connect-btn {
+            background: linear-gradient(135deg, #238636, #2ea043);
+            box-shadow: 0 4px 15px rgba(35, 134, 54, 0.4);
+        }
+
+        [data-theme="dark"] .connect-btn:hover {
+            background: linear-gradient(135deg, #2ea043, #238636);
+            box-shadow: 0 6px 20px rgba(35, 134, 54, 0.5);
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            background: rgba(255,255,255,0.2);
+            color: var(--text-light);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab:hover, .tab.active {
+            background: var(--bg-secondary);
+            color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow-medium);
+        }
+
+        .tab-content {
+            background: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            backdrop-filter: blur(10px);
+            display: none;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        [data-theme="dark"] .form-group input:focus, 
+        [data-theme="dark"] .form-group select:focus {
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: var(--text-light);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+        }
+
+        [data-theme="dark"] .submit-btn:hover {
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .batch-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px var(--shadow-light);
+            border-left: 6px solid var(--accent-color);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .batch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-color), transparent, var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .batch-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px var(--shadow-medium);
+        }
+
+        .batch-card:hover::before {
+            opacity: 1;
+        }
+
+        .batch-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .batch-status {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .status-safe { background: var(--success-bg); color: var(--success-text); }
+        .status-recalled { background: var(--error-bg); color: var(--error-text); }
+        .status-expired { background: var(--warning-bg); color: var(--warning-text); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--accent-color), #764ba2);
+            color: var(--text-light);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 12px 32px var(--shadow-medium);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 48px var(--shadow-medium);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        [data-theme="dark"] .stat-card {
+            background: linear-gradient(135deg, #58a6ff, #1f6feb);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid var(--success-bg);
+        }
+
+        .message.error {
+            background: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid var(--error-bg);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .contract-config {
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .contract-config h3 {
+            color: var(--warning-text);
+            margin-bottom: 10px;
+        }
+
+        .contract-config input {
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .demo-data {
+            background: rgba(231, 243, 255, 0.9);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        [data-theme="dark"] .demo-data {
+            background: rgba(22, 27, 34, 0.9);
+            border: 2px solid rgba(88, 166, 255, 0.3);
+        }
+
+        .demo-data h4 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .demo-data p {
+            margin: 5px 0;
+            font-family: monospace;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header h1 { font-size: 2em; }
+            .wallet-info { flex-direction: column; }
+            .tabs { justify-content: center; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+                🌙
+            </button>
+            <h1>🏥 Pharma Supply Tracker</h1>
+            <p>Blockchain-based drug supply chain verification system</p>
+        </div>
+
+        <div class="contract-config">
+            <h3>⚙️ Contract Configuration</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="contract-address">Contract Address</label>
+                    <input type="text" id="contract-address" value="ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM" placeholder="Enter contract address">
+                </div>
+                <div class="form-group">
+                    <label for="contract-name">Contract Name</label>
+                    <input type="text" id="contract-name" value="pharma-supply-tracker" placeholder="Enter contract name">
+                </div>
+            </div>
+        </div>
+
+        <div class="wallet-section">
+            <div class="wallet-info">
+                <div>
+                    <strong>Wallet Status:</strong> 
+                    <span id="wallet-status">Not Connected</span>
+                </div>
+                <div>
+                    <strong>Network:</strong> 
+                    <span id="network-status">Stacks Testnet</span>
+                </div>
+                <button class="connect-btn" id="connect-wallet">Connect to Stacks</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('register')">📝 Register Batch</button>
+            <button class="tab" onclick="switchTab('verify')">🔍 Verify Batch</button>
+            <button class="tab" onclick="switchTab('manufacturers')">👥 Manufacturers</button>
+            <button class="tab" onclick="switchTab('stats')">📊 Statistics</button>
+        </div>
+
+        <div id="register-tab" class="tab-content active">
+            <h2>Register New Drug Batch</h2>
+            
+            <div class="demo-data">
+                <h4>📋 Sample Data for Testing</h4>
+                <p><strong>Batch ID:</strong> BATCH001</p>
+                <p><strong>Drug Name:</strong> Acetaminophen 500mg</p>
+                <p><strong>Manufacturer:</strong> ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM</p>
+                <p><strong>Serial Number:</strong> SN123456789</p>
+                <p><strong>NDC Code:</strong> 12345-678-90</p>
+                <p><strong>Manufacture Block:</strong> 1000 (or current block height)</p>
+                <p><strong>Expiry Block:</strong> 5000 (future block height)</p>
+                <button class="submit-btn" onclick="fillDemoData()" style="width: auto; margin: 10px 0 0 0; padding: 8px 16px; font-size: 14px;">Fill Demo Data</button>
+            </div>
+
+            <form id="register-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="batch-id">Batch ID *</label>
+                        <input type="text" id="batch-id" maxlength="32" required placeholder="Enter unique batch ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="drug-name">Drug Name *</label>
+                        <input type="text" id="drug-name" maxlength="64" required placeholder="Enter drug name">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="manufacturer">Manufacturer Address *</label>
+                        <input type="text" id="manufacturer" required placeholder="ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM">
+                    </div>
+                    <div class="form-group">
+                        <label for="serial-number">Serial Number *</label>
+                        <input type="text" id="serial-number" maxlength="32" required placeholder="Enter serial number">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ndc-code">NDC Code *</label>
+                        <input type="text" id="ndc-code" maxlength="16" required placeholder="Enter NDC code">
+                    </div>
+                    <div class="form-group">
+                        <label for="manufacture-date">Manufacture Block Height *</label>
+                        <input type="number" id="manufacture-date" required placeholder="Enter block height">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="expiry-date">Expiry Block Height *</label>
+                    <input type="number" id="expiry-date" required placeholder="Enter expiry block height">
+                </div>
+                <button type="submit" class="submit-btn">Register Drug Batch</button>
+            </form>
+        </div>
+
+        <div id="verify-tab" class="tab-content">
+            <h2>Verify Drug Batch</h2>
+            <div class="form-group">
+                <label for="verify-batch-id">Batch ID</label>
+                <input type="text" id="verify-batch-id" maxlength="32" placeholder="Enter batch ID to verify">
+            </div>
+            <button class="submit-btn" onclick="verifyBatch()">Verify Batch Safety</button>
+            <button class="submit-btn" onclick="getBatchInfo()" style="background: linear-gradient(135deg, #17a2b8, #138496); margin-top: 10px;">Get Batch Details</button>
+            
+            <div id="batch-results"></div>
+        </div>
+
+        <div id="manufacturers-tab" class="tab-content">
+            <h2>Manufacturer Management</h2>
+            <div class="form-group">
+                <label for="new-manufacturer">Add Authorized Manufacturer</label>
+                <input type="text" id="new-manufacturer" placeholder="ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM">
+            </div>
+            <button class="submit-btn" onclick="addManufacturer()">Add Manufacturer</button>
+            
+            <div class="form-group" style="margin-top: 30px;">
+                <label for="check-manufacturer">Check Manufacturer Authorization</label>
+                <input type="text" id="check-manufacturer" placeholder="ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM">
+            </div>
+            <button class="submit-btn" onclick="checkManufacturer()" style="background: linear-gradient(135deg, #17a2b8, #138496);">Check Authorization</button>
+
+            <div id="manufacturer-results"></div>
+        </div>
+
+        <div id="stats-tab" class="tab-content">
+            <h2>Contract Statistics</h2>
+            <div class="stats-grid" id="stats-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading statistics...</p>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="loadStats()">Refresh Statistics</button>
+            <button class="submit-btn" onclick="getContractOwner()" style="background: linear-gradient(135deg, #6f42c1, #5a3a9f); margin-top: 10px;">Get Contract Owner</button>
+        </div>
+
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        // Global variables
+        let isConnected = false;
+        let currentAddress = '';
+        let currentTheme = 'light';
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            initializeTheme();
+        });
+
+        function initializeApp() {
+            // Set up wallet connection
+            document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+            
+            // Set up form submission
+            document.getElementById('register-form').addEventListener('submit', handleRegistration);
+            
+            // Set up theme toggle
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+        }
+
+        function initializeTheme() {
+            // Check for saved theme or default to light
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            currentTheme = savedTheme;
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggle();
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('theme', currentTheme);
+            updateThemeToggle();
+            showMessage(`Switched to ${currentTheme} mode`, 'success');
+        }
+
+        function updateThemeToggle() {
+            const toggle = document.getElementById('theme-toggle');
+            toggle.textContent = currentTheme === 'light' ? '🌙' : '☀️';
+            toggle.title = `Switch to ${currentTheme === 'light' ? 'dark' : 'light'} theme`;
+        }
+
+        function getContractDetails() {
+            return {
+                address: document.getElementById('contract-address').value,
+                name: document.getElementById('contract-name').value
+            };
+        }
+
+        function fillDemoData() {
+            document.getElementById('batch-id').value = 'BATCH001';
+            document.getElementById('drug-name').value = 'Acetaminophen 500mg';
+            document.getElementById('manufacturer').value = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+            document.getElementById('serial-number').value = 'SN123456789';
+            document.getElementById('ndc-code').value = '12345-678-90';
+            document.getElementById('manufacture-date').value = '1000';
+            document.getElementById('expiry-date').value = '5000';
+        }
+
+        async function connectWallet() {
+            if (isConnected) {
+                // Disconnect
+                isConnected = false;
+                currentAddress = '';
+                document.getElementById('wallet-status').textContent = 'Not Connected';
+                document.getElementById('connect-wallet').textContent = 'Connect to Stacks';
+                showMessage('Wallet disconnected', 'success');
+                return;
+            }
+
+            try {
+                // Check if Stacks wallet is available
+                if (typeof window.StacksProvider === 'undefined' && typeof window.btc === 'undefined') {
+                    // Simulate wallet connection for demo
+                    isConnected = true;
+                    currentAddress = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+                    document.getElementById('wallet-status').textContent = `Connected: ${currentAddress}`;
+                    document.getElementById('connect-wallet').textContent = 'Disconnect Wallet';
+                    showMessage('Demo mode: Wallet connected (simulated)', 'success');
+                } else {
+                    // Real wallet connection would go here
+                    showMessage('Please install a Stacks wallet (Hiro Wallet, Xverse, etc.)', 'error');
+                }
+            try {
+                // Add the code to be executed here
+            } catch (error) {
+                showMessage('Failed to connect wallet: ' + error.message, 'error');
+            }
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        async function handleRegistration(event) {
+            event.preventDefault();
+            
+            if (!isConnected) {
+                showMessage('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const contract = getContractDetails();
+            const formData = {
+                batchId: document.getElementById('batch-id').value,
+                drugName: document.getElementById('drug-name').value,
+                manufacturer: document.getElementById('manufacturer').value,
+                manufactureDate: parseInt(document.getElementById('manufacture-date').value),
+                expiryDate: parseInt(document.getElementById('expiry-date').value),
+                serialNumber: document.getElementById('serial-number').value,
+                ndcCode: document.getElementById('ndc-code').value
+            };
+
+            // Validate data
+            if (!formData.batchId || !formData.drugName || !formData.manufacturer || 
+                !formData.serialNumber || !formData.ndcCode || 
+                !formData.manufactureDate || !formData.expiryDate) {
+                showMessage('Please fill in all required fields', 'error');
+                return;
+            }
+
+            if (formData.expiryDate <= formData.manufactureDate) {
+                showMessage('Expiry date must be after manufacture date', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Registering batch... (Demo Mode)', 'success');
+                
+                // Simulate API call
+                await simulateTransaction();
+                
+                showMessage(`Batch registered successfully! Batch ID: ${formData.batchId}`, 'success');
+                document.getElementById('register-form').reset();
+                
+            } catch (error) {
+                showMessage('Registration failed: ' + error.message, 'error');
+            }
+        }
+
+        async function verifyBatch() {
+            const batchId = document.getElementById('verify-batch-id').value;
+            if (!batchId) {
+                showMessage('Please enter a batch ID', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Verifying batch... (Demo Mode)', 'success');
+                
+                await simulateTransaction();
+                
+                // Simulate verification result
+                const isRegistered = batchId.toUpperCase() === 'BATCH001';
+                
+                if (isRegistered) {
+                    displayBatchVerification({
+                        isAuthentic: true,
+                        isSafe: true,
+                        isRecalled: false,
+                        isExpired: false,
+                        batchStatus: 'SAFE'
+                    }, batchId);
+                } else {
+                    document.getElementById('batch-results').innerHTML = `
+                        <div class="message error">
+                            Batch ID "${batchId}" not found in the system
+                        </div>
+                                `;
+                    }
+                }
+                
+            } catch (error) {
+                showMessage('Verification failed: ' + error.message, 'error');
+            }
+        }
+
+        async function getBatchInfo() {
+            const batchId = document.getElementById('verify-batch-id').value;
+            if (!batchId) {
+                showMessage('Please enter a batch ID', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Getting batch info... (Demo Mode)', 'success');
+                
+                await simulateTransaction();
+                
+                const isRegistered = batchId.toUpperCase() === 'BATCH001';
+                
+                if (isRegistered) {
+                    displayBatchInfo({
+                        drugName: 'Acetaminophen 500mg',
+                        manufacturer: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+                        serialNumber: 'SN123456789',
+                        ndcCode: '12345-678-90',
+                        manufactureDate: 1000,
+                        expiryDate: 5000,
+                        isVerified: true,
+                        isRecalled: false,
+                        verificationTimestamp: 1200
+                    }, batchId);
+                } else {
+                    document.getElementById('batch-results').innerHTML = `
+                        <div class="message error">
+                            Batch ID "${batchId}" not found in the system
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                showMessage('Failed to get batch info: ' + error.message, 'error');
+            }
+        }
+
+        async function addManufacturer() {
+            if (!isConnected) {
+                showMessage('Please connect your wallet first', 'error');
+                return;
+            }
+
+            const manufacturer = document.getElementById('new-manufacturer').value;
+            if (!manufacturer) {
+                showMessage('Please enter a manufacturer address', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Adding manufacturer... (Demo Mode)', 'success');
+                
+                await simulateTransaction();
+                
+                showMessage(`Manufacturer ${manufacturer} added successfully!`, 'success');
+                document.getElementById('new-manufacturer').value = '';
+                
+            } catch (error) {
+                showMessage('Failed to add manufacturer: ' + error.message, 'error');
+            }
+        }
+
+        async function checkManufacturer() {
+            const manufacturer = document.getElementById('check-manufacturer').value;
+            if (!manufacturer) {
+                showMessage('Please enter a manufacturer address', 'error');
+                return;
+            }
+
+            try {
+                showMessage('Checking manufacturer... (Demo Mode)', 'success');
+                
+                await simulateTransaction();
+                
+                // Simulate check - assume first address is authorized
+                const isAuthorized = manufacturer === 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+                
+                displayManufacturerResult(isAuthorized, manufacturer);
+                
+            } catch (error) {
+                showMessage('Failed to check manufacturer: ' + error.message, 'error');
+            }
+        }
+
+        async function loadStats() {
+            try {
+                showMessage('Loading statistics... (Demo Mode)', 'success');
+                
+                await simulateTransaction();
+                
+                displayStats({
+                    totalVerifiedBatches: 5,
+                    totalRecalledBatches: 1,
+                    activeBatches: 4
+                });
+                
+            } catch (error) {
+                document.getElementById('stats-grid').innerHTML = `
+                    <div class="message error">
+                        Failed to load statistics: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function getContractOwner() {
+            try {
+                showMessage('Getting contract owner... (Demo Mode)', 'success');
+                
+                await simulateTransaction();
+                
+                const owner = 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM';
+                
+                showMessage(`Contract Owner: ${owner}`, 'success');
+                
+            } catch (error) {
+                showMessage('Failed to get contract owner: ' + error.message, 'error');
+            }
+        }
+
+        function displayBatchVerification(data, batchId) {
+            const resultsDiv = document.getElementById('batch-results');
+            
+            const statusClass = data.batchStatus === 'SAFE' ? 'status-safe' : 
+                               data.batchStatus === 'RECALLED' ? 'status-recalled' : 'status-expired';
+
+            resultsDiv.innerHTML = `
+                <div class="batch-card">
+                    <h3>Batch Verification Results</h3>
+                    <p><strong>Batch ID:</strong> ${batchId}</p>
+                    <p><strong>Status:</strong> <span class="batch-status ${statusClass}">${data.batchStatus}</span></p>
+                    <p><strong>Authentic:</strong> ${data.isAuthentic ? '✅ Yes' : '❌ No'}</p>
+                    <p><strong>Safe:</strong> ${data.isSafe ? '✅ Yes' : '❌ No'}</p>
+                    <p><strong>Recalled:</strong> ${data.isRecalled ? '⚠️ Yes' : '✅ No'}</p>
+                    <p><strong>Expired:</strong> ${data.isExpired ? '⚠️ Yes' : '✅ No'}</p>
+                </div>
+            `;
+        }
+
+        function displayBatchInfo(data, batchId) {
+            const resultsDiv = document.getElementById('batch-results');
+            
+            resultsDiv.innerHTML = `
+                <div class="batch-card">
+                    <h3>Batch Information</h3>
+                    <p><strong>Batch ID:</strong> ${batchId}</p>
+                    <p><strong>Drug Name:</strong> ${data.drugName}</p>
+                    <p><strong>Manufacturer:</strong> ${data.manufacturer}</p>
+                    <p><strong>Serial Number:</strong> ${data.serialNumber}</p>
+                    <p><strong>NDC Code:</strong> ${data.ndcCode}</p>
+                    <p><strong>Manufacture Block:</strong> ${data.manufactureDate}</p>
+                    <p><strong>Expiry Block:</strong> ${data.expiryDate}</p>
+                    <p><strong>Verified:</strong> ${data.isVerified ? '✅ Yes' : '❌ No'}</p>
+                    <p><strong>Recalled:</strong> ${data.isRecalled ? '⚠️ Yes' : '✅ No'}</p>
+                    <p><strong>Verification Block:</strong> ${data.verificationTimestamp}</p>
+                </div>
+            `;
+        }
+
+        // Complete the JavaScript functions and fix syntax errors
+        function displayManufacturerResult(isAuthorized, manufacturer) {
+            const resultsDiv = document.getElementById('manufacturer-results');
+            
+            resultsDiv.innerHTML = `
+                <div class="batch-card">
+                    <h3>Manufacturer Authorization Status</h3>
+                    <p><strong>Address:</strong> ${manufacturer}</p>
+                    <p><strong>Authorized:</strong> ${isAuthorized ? '✅ Yes' : '❌ No'}</p>
+                </div>
+            `;
+        }
+
+        function displayStats(data) {
+            const statsGrid = document.getElementById('stats-grid');
+            
+            statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${data.totalVerifiedBatches}</div>
+                    <p>Total Verified Batches</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.totalRecalledBatches}</div>
+                    <p>Total Recalled Batches</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${data.activeBatches}</div>
+                    <p>Active Batches</p>
+                </div>
+            `;
+        }
+
+        function showMessage(message, type = 'success') {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            
+            messagesDiv.appendChild(messageDiv);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        async function simulateTransaction() {
+            // Simulate blockchain transaction delay
+            return new Promise(resolve => setTimeout(resolve, 1500));
+        }
+
+        // Utility function to validate Stacks address
+        function isValidStacksAddress(address) {
+            const stacksRegex = /^ST[0-9A-Z]{39}$/;
+            return stacksRegex.test(address);
+        }
+
+        // Utility function to format block height
+        function formatBlockHeight(height) {
+            return height.toLocaleString();
+        }
+
+        // Initialize demo data on page load
+        window.addEventListener('load', function() {
+            // Set current block height as default for manufacture date
+            const currentBlock = 1200; // Simulated current block height
+            document.getElementById('manufacture-date').value = currentBlock;
+            document.getElementById('expiry-date').value = currentBlock + 4000;
+        });
+    </script>
+</body>
+</html>
